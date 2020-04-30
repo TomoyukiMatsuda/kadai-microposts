@@ -5,4 +5,6 @@ class User < ApplicationRecord
                     format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i },
                     uniqueness: { case_sensitive: false } # 大文字小文字を区別せず同じものと判断
   has_secure_password
+  
+  has_many :microposts
 end

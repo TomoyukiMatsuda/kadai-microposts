@@ -1,4 +1,5 @@
 module SessionsHelper
+  # 現在ユーザを取得するメソッド
   def current_user
     @current_user ||= User.find_by(id: session[:user_id])
     # 下の式を短く書いている
@@ -8,9 +9,9 @@ module SessionsHelper
     #   @current_user = User.find_by(id: session[:user_id])
     # end
     # @current_userに値があればそのまま、なければsessionからidを代入する
-    # 現在ログインしているユーザを取得するメソッド
   end
   
+  # 現在ログインしているかどうか確認するメソッド
   def logged_in?
     !!current_user
     # 下の式を短く書いている
@@ -20,6 +21,5 @@ module SessionsHelper
     #   return false
     # end
     # current_userから値が返って来ればtrue, 値がnilならfalse
-    # 現在ログインしているかどうか確認するメソッド
   end
 end
