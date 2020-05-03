@@ -7,11 +7,13 @@ class User < ApplicationRecord
   has_secure_password
   
   has_many :microposts
-  has_many :relationships # user.relationshipsとした時はuser_idを取得しに行く
+  has_many :relationships # user.relationshipsとした時はそのuserのフォローしているrelationshipインスタンス全てを取得しに行く
   has_many :followings, through: :relationships, source: :follow
-         # user.reverses_of_relationshipとした時はfollow_idを取得しに行く
+         # user.reverses_of_relationshipとした時はそのuserがフォローされているrelationshipインスタンスを全て取得しに行く
   has_many :reverses_of_relationship, class_name: 'Relationship', foreign_key: :follow_id
   has_many :followers, through: :reverses_of_relationship, source: :user
+  has_many :favorites # user.favoritesとした時は自分のuser_idと合致するfavoriteインスタンスを取得しにいく
+  has_many :favorite_microposts, through: :favorites, source: :micropost
   
   # ここでのselfは実行したUserのインスタンスを意味する
   def follow(other_user)
@@ -33,4 +35,17 @@ class User < ApplicationRecord
     Micropost.where(user_id: self.following_ids + [self.id])
   end
   
+  # お気に入りに追加するメソッド
+  def favorite(other_micropost)
+    self.favorites.find_or_create_by(micropost_id: other_micropost.id)
+  end
+  # お気に入りを外すメソッド
+  def unfavorite(other_micropost)
+    favorite = self.favorites.find_by(micropost_id: other_micropost.id)
+    favorite.destroy if favorite
+  end
+  # お気に入り済みか確認するメソッド
+  def favorite?(other_micropost)
+    self.favorite_microposts.include?(other_micropost)
+  end
 end
